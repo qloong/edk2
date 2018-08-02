@@ -1,48 +1,30 @@
 {
   "test_suite": [
-    { "name":"shell_hii_suite",
+    { "name":"nt32_test_cases",
       "run_times":1,
       "sequence":
       [
         {
-          "name":"simple_shell_hii.py",
+          "name":"nt32_helloworld.py",
           "order": 1
         },
         {
-          "name":"hello_future.py",
-          "order": -1
-        },
-        {
-          "name":"simple_shell.py",
+          "name":"nt32_shell_hii.py",
           "order": 2
         }
       ]
     },
 
-    { "name":"basic_print",
-      "run_times":2,
+    { "name":"nt32_test_cases2",
+      "run_times":1,
       "sequence":
       [
         {
-          "name":"hello_world.py",
+          "name":"nt32_helloworld.py",
           "order": 1
         },
         {
-          "name":"good_bye_dear.py",
-          "order": 2
-        }
-      ]
-    },
-    { "name":"basic_print2",
-      "run_times":3,
-      "sequence":
-      [
-        {
-          "name":"hello_world.py",
-          "order": 2
-        },
-        {
-          "name":"good_bye_dear.py",
+          "name":"nt32_shell_hii.py",
           "order": -1
         }
       ]

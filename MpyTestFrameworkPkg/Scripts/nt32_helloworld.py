@@ -1,5 +1,5 @@
 # # @file
-# This file is a demo script to automate shell operations
+# This file is a demo script to print hello world.
 #
 # INTEL CONFIDENTIAL
 # Copyright (c) 2017-2018, Intel Corporation. All rights reserved.<BR>
@@ -22,45 +22,15 @@
 # rights must be express and approved by Intel in writing.
 #
 
-#Sample case for shell basic command test
-
-import sys
-import ure
+#Sample case for printing hello world.
 import mptf
 
 def run(log_path):
     obj = mptf.mptf(log_path)
     obj.Input('cls' + mptf.ENTER)
-    obj.Input('fs0:' + mptf.ENTER)
-    obj.SetTickTock(200)
-
-    ########   ls   ########
-    obj.Info('Shell Command \'ls\': ',True)
-    obj.Input('ls')
-    obj.FuncKey(mptf.ENTER)
-    if obj.WaitUntil('Dir', 10):
-        obj.Pass('PASS',True)
-    else:
-        obj.Fail('FAIL',True)
-
-    ########  echo  ########
-    obj.Info('Shell Command \'echo\': ',True)
-    obj.Input('cls' + mptf.ENTER)
     obj.Input('echo hello world' + mptf.ENTER)
-    if obj.Verify('hello world', None, 2):
-        obj.Pass('PASS',True)
+    if obj.Verify('hello world', None):
+        obj.Pass('Print Hello World PASS',True)
     else:
-        obj.Fail('FAIL',True)
-
-    ########  exit  ########
-    obj.Info('Shell Command \'exit\': ',True)
-    obj.Input('exit' + mptf.ENTER)
-
-    result = obj.SelectOption('UEFI Shell', mptf.LIGHTGRAY + mptf.BACKBLACK)
-    obj.Debug ('UEFI Shell result = ' + str(result))
-
-    obj.FuncKey(mptf.ENTER)
-    obj.FuncKey(mptf.ESC)
-
-    obj.Info('The sample case is end.', True)
+        obj.Fail('Print Hello World FAIL',True)
     obj.Close()
