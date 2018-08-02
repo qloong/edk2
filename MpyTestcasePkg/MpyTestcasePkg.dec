@@ -1,0 +1,47 @@
+## @file  MpyTestcasePkg.dec
+# This package provides the modules that conform to UEFI/PI Industry standards.
+# It also provides the definitions(including PPIs/PROTOCOLs/GUIDs and library classes)
+# and libraries instances, which are used for those modules.
+#
+# Copyright (c) 2007 - 2017, Intel Corporation. All rights reserved.<BR>
+# Copyright (c) 2016, Linaro Ltd. All rights reserved.<BR>
+# (C) Copyright 2016 Hewlett Packard Enterprise Development LP<BR>
+# Copyright (c) 2017, AMD Incorporated. All rights reserved.<BR>
+#
+# This program and the accompanying materials are licensed and made available under
+# the terms and conditions of the BSD License that accompanies this distribution.
+# The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php.
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = MpyTestcasePkg
+  PACKAGE_UNI_FILE               = MpyTestcasePkg.uni
+  PACKAGE_GUID                   = BA0D78D6-2CBF-414b-BD4D-B6762A894299
+  PACKAGE_VERSION                = 0.96
+
+[Includes]
+  Include
+
+[LibraryClasses]
+
+[Guids]
+
+[Protocols]
+
+  ## Include/Protocol/VirtualConsole.h
+  gEdkiiVirtualConsoleProtocolGuid = { 0x372f6584, 0xf4c3, 0x47d4, { 0x92, 0x99, 0xac, 0x6c, 0x1b, 0xbe, 0x4e, 0xc } }
+  
+  ## Include/Protocol/VirtualLog.h
+  gEdkiiVirtualLogProtocolGuid = { 0x372f6584, 0xf4c3, 0x47d4, { 0x91, 0x99, 0xac, 0x6c, 0x1b, 0xbe, 0x4e, 0xd } }
+  
+[PcdsPatchableInModule]
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  MdeModulePkgExtra.uni
