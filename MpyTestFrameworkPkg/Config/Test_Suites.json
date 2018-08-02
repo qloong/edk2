@@ -1,0 +1,31 @@
+{
+  "test_suites": [
+    { "name":"print_related_suites",
+      "test_suite":
+      [
+        {
+          "name":"basic_print",
+          "order": 1
+        },
+        {
+          "name":"does_not_exist",
+          "order": -1
+        },
+        {
+          "name":"basic_print2",
+          "order": 2
+        }
+      ]
+    },
+
+    { "name":"shell_hii_suites",
+      "test_suite":
+      [
+        {
+          "name":"shell_hii_suite",
+          "order": 1
+        }
+      ]
+    }
+  ]
+}
