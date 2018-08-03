@@ -37,7 +37,7 @@ Note that MicroPython does not implement 100% of CPython syntax. Please refer to
 * Asynchronous execution mode (run in the background of UEFI firmware)
 * Full UEFI services support (via `uefi` module)
 * Direct physical memory access (including memory allocation)
-* Enhanced regular expression (via `re` module)
+* Enhanced regular expression (via `_re` module)
 
 ## How to build
 
