@@ -24,11 +24,15 @@ def check_environment():
         error_p('Please install maven fisrstly')
         return False
 
-    if not os.path.exists(wp + '/MpyTestFrameworkPkg' + '/Report' + '/resources' + '/js' + '/Chart.bundle.min.js'):
+    global origin
+    origin = os.path.split(os.path.abspath(__file__))[0]
+    print "origin is: " + origin 
+
+    if not os.path.exists(origin + '/Report' + '/resources' + '/js' + '/Chart.bundle.min.js'):
         error_p('Please download Chart.bundle.min.js to MpyTestFrameworkPkg/Report/resources/js folder')
         return False
 
-    if not os.path.exists(wp + '/MpyTestFrameworkPkg' + '/Report' + '/resources' + '/js' + '/jquery-3.3.1.js'):
+    if not os.path.exists(origin + '/Report' + '/resources' + '/js' + '/jquery-3.3.1.js'):
         error_p('Please download jquery-3.3.1.jsChart.bundle.min.js to MpyTestFrameworkPkg/Report/resources/js folder')
         return False
     
@@ -39,9 +43,8 @@ def  generate_target():
     if os.path.isdir(os.path.join(wp , 'Build')) == False:
         os.mkdir(os.path.join(wp + 'Build'))
 
-    origin = os.path.join(wp, 'MpyTestFrameworkPkg')
     target = os.path.join(wp, 'Build','MpyTest')
-    mpython_lib = os.path.join(wp,'MicroPythonPkg/MicroPythonDxe/Lib/Uefi')
+    mpython_lib = os.path.join(os.path.dirname(origin),'MicroPythonPkg/MicroPythonDxe/Lib/Uefi')
     mpython_bin = os.path.join(wp,'Build','MicroPythonPkg')
 
     if os.path.isdir(target) == True:
