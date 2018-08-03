@@ -34,13 +34,13 @@ def preprocess(in_file, out_file, incs, option):
     subprocess.check_call(shlex.split(cmd, posix=False))
 
 def collect_qstr(src, mpy_dir, qstr_dir):
-    python = os.path.join(os.environ['PYTHON_HOME'], "python")
+    python = "python"
     script = os.path.join(mpy_dir, "py", "makeqstrdefs.py")
     cmd = r"%s %s split %s %s dummy" % (python, script, src, qstr_dir)
     subprocess.check_call(shlex.split(cmd, posix=False))
 
 def cat_qstr(dst, mpy_dir, qstr_dir):
-    python = os.path.join(os.environ['PYTHON_HOME'], "python")
+    python = "python"
     script = os.path.join(mpy_dir, "py", "makeqstrdefs.py")
     cmd = r"%s %s cat dummy %s %s" % (python, script, qstr_dir, dst + ".tmp")
     subprocess.check_call(shlex.split(cmd, posix=False))
@@ -74,7 +74,7 @@ def gen_qstr(qstr_file, collected_qstr, mpy_dir, qstr_dir, incs, option):
         fd.truncate(0)
         fd.write(content)
 
-    python = os.path.join(os.environ['PYTHON_HOME'], "python")
+    python = "python"
     script = os.path.join(mpy_dir, "py", "makeqstrdata.py")
     cmd = r"%s %s %s" % (python, script, pp_file)
     with open(qstr_file, "w+") as output:
@@ -104,7 +104,7 @@ def get_pkg_inc(pkg, arch):
     return inc_paths
 
 def gen_version(mpy_dir, hdr_file):
-    python = os.path.join(os.environ['PYTHON_HOME'], "python")
+    python = "python"
     script = os.path.join(mpy_dir, "py", "makeversionhdr.py")
 
     cwd = os.getcwd()
@@ -232,7 +232,7 @@ if __name__ == "__main__":
     external_tools_ready = True
     try:
         output = subprocess.check_output(["python", "--version"], stderr=subprocess.STDOUT)
-        print("Found:", output.split('\n')[0])
+        print("Found:", output.decode("utf-8").split('\n')[0])
     except:
         print("ERROR: 'python' is not in PATH env.")
         print("       Please add the path of 'python' in PATH env before running this tool.")
@@ -240,7 +240,7 @@ if __name__ == "__main__":
 
     try:
         output = subprocess.check_output(shlex.split(PP_CMD, posix=False)[0], stderr=subprocess.STDOUT)
-        print("Found:", output.split('\n')[0])
+        print("Found:", output.decode("utf-8").split('\n')[0])
     except:
         print("ERROR: '%s' cannot run." % PP_CMD)
         print("       Please initialize build environment before running this tool.")

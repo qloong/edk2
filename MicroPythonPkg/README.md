@@ -13,7 +13,7 @@ This package contains three main components:
       * Source code folder: `MicroPythonDxe`
       * Binary file: `MicroPythonDxe.efi`
   * MicroPython application
-      * User interactive interface (wrapper) of the MicroPython interpreter, which can launched as a UEFI Shell application or  Shell-Independent UEFI application (via BDS Boot Option, similar to launching an OS loader).
+      * User interactive interface (wrapper) of the MicroPython interpreter, which can be launched as a UEFI Shell application or  Shell-Independent UEFI application (via BDS Boot Option, similar to launching an OS loader).
       * Source code folder: `MicroPythonApp`
       * Binary file: `micropython.efi`
   * Virtual console driver
@@ -35,7 +35,7 @@ Note that MicroPython does not implement 100% of CPython syntax. Please refer to
 ### UEFI Specific Features
 
 * Asynchronous execution mode (run in the background of UEFI firmware)
-* Full UEFI services support (via UEFI module)
+* Full UEFI services support (via `uefi` module)
 * Direct physical memory access (including memory allocation)
 * Enhanced regular expression (via `re` module)
 
