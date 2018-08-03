@@ -10,7 +10,7 @@ This test framework is dependent on the MicroPython Interpreter for UEFI: [Micro
 
 ### Download Required Tools
  * Install [Python27](https://www.python.org/) and set the `PYTHON_HOME` environment variable to the Python 2.7 installation directory (`C:\Python27`)
- * Install Maven, using the official site tutorial: [Installing Apache Maven](https://maven.apache.org/install.html)
+ * Install Maven, using the official site tutorial: [Installing Apache Maven](https://maven.apache.org/install.html). JDK 1.8 is prefered.
  * Download `Chart.bundle.min.js` from the [ChartJS official site](https://github.com/chartjs/Chart.js/releases) and copy it to ```MpyTestFrameworkPkg\Report\resources\js```
  * Download `jquery-3.3.1.js` from the [JQuery official site](https://jquery.com/download/) and copy it to ```MpyTestFrameworkPkg\Report\resources\js```
 
@@ -39,10 +39,10 @@ Additional toolchains will be supported in future releases.
 The following instructions configure the MicroPython Test Framework for UEFI to run from a USB Storage Device:
 
  1. Format the USB drive with a FAT32 file system. Change the drive label to 'MPTF'.
- * Copy the `MpyTest` directory and its contents to the root folder of the USB drive.
- * Create a sub-directory for test scripts named `Scripts` under the `MpyTest` folder.
- * Mount the media disk on the System Under Test (SUT) and boot the SUT to the UEFI shell.
- * Enter the `MpyTest` directory and execute `startup.nsh` to run the MicroPython Test Framework for UEFI.
+ 2. Copy the `MpyTest` directory and its contents to the root folder of the USB drive.
+ 3. Create a sub-directory for test scripts named `Scripts` under the `MpyTest` folder.
+ 4. Mount the media disk on the System Under Test (SUT) and boot the SUT to the UEFI shell.
+ 5. Enter the `MpyTest` directory and execute `startup.nsh` to run the MicroPython Test Framework for UEFI.
 
 ## File Structure
 
@@ -87,14 +87,14 @@ The `MpyTest` folder contains the following:
 The NT32 environment can be used to evaluate the test framework.
 
 1. Build the NT32 environment, based on the [Getting Started](https://github.com/tianocore/tianocore.githubio/wiki/Getting-Started-with-EDK-II) instructions from TianoCore.
-* Copy `%WORKSPACE%\Build\MpyTest` to the same directory as `SecMain.exe`.
-* Run NT32 from the workspace directory: `build run`
-* After NT32 boots to the UEFI Shell environment, type the following commands to change the volume label for `FS0:`
+2. Copy `%WORKSPACE%\Build\MpyTest` to the same directory as `SecMain.exe`.
+3. Run NT32 from the workspace directory: `build run`
+4. After NT32 boots to the UEFI Shell environment, type the following commands to change the volume label for `FS0:`
     ```
      fS0:
      vol -n MPTF
     ```
-* Enter the `MpyTest` directory to run the sample test cases:
+5. Enter the `MpyTest` directory to run the sample test cases:
   * Run the test case `nt32_shell_hii.py`:
       ```
       startup.nsh -a ia32 -c nt32_shell_hii.py
@@ -107,12 +107,12 @@ The NT32 environment can be used to evaluate the test framework.
      ```
       startup.nsh -a ia32 -ss nt32_related_suites
      ```
-* Check the `Log` folder to verify test logs were properly generated.
-* Generate a test report. This relies on Java and must be run from Microsoft Windows environment (not the UEFI Shell).
+6. Check the `Log` folder to verify test logs were properly generated.
+7. Generate a test report. This relies on Java and must be run from Microsoft Windows environment (not the UEFI Shell).
   * Open a Windows command prompt
   * Navigate to the `MpyTest\Tools` folder under the same directory as `SecMain.exe`.
   * Use the following command to generate a test report.
     ```
        java -jar ReportGenerator-1.0-SNAPSHOT-jar-with-dependencies.jar
     ```
- * Open the `MpyTest\Report` folder to review the generated report.
+ 8. Open the `MpyTest\Report` folder to review the generated report.
