@@ -420,26 +420,24 @@ PathnCat (
   EFI_STATUS    Status;
   UINTN         Length;
 
-  if (Dst == NULL || Src == NULL || MaxLen == 0) {
+  if (Dst == NULL || Src == NULL || MaxLen == 0 || Src[0] == '\0') {
     return Dst;
   }
 
-  if (Dst[0] == '\0' || Src[0] == '\0') {
-    Status = StrnCatS (Dst, MaxLen + 1, Src, MaxLen);
-    return EFI_ERROR(Status) ? NULL : Dst;
-  }
-
   Length = StrLen (Dst);
-  if (Dst[Length - 1] != EFI_SCRIPT_FILE_PATH_SEP_CHAR) {
-    if (Src[0] != EFI_SCRIPT_FILE_PATH_SEP_CHAR) {
-      Status = StrnCatS (Dst, Length + MaxLen + 1, EFI_SCRIPT_FILE_PATH_SEP_STR, 1);
-      if (EFI_ERROR(Status)) {
-        return NULL;
+  if (Length > 0) {
+      if (Dst[Length - 1] != EFI_SCRIPT_FILE_PATH_SEP_CHAR) {
+          if (Src[0] != EFI_SCRIPT_FILE_PATH_SEP_CHAR) {
+              Status = StrnCatS(Dst, Length + MaxLen + 1, EFI_SCRIPT_FILE_PATH_SEP_STR, 1);
+              if (EFI_ERROR(Status)) {
+                  return NULL;
+              }
+              Length += 1;
+          }
       }
-      Length += 1;
-    }
-  } else if (Src[0] == EFI_SCRIPT_FILE_PATH_SEP_CHAR) {
-    Src += 1;
+      else if (Src[0] == EFI_SCRIPT_FILE_PATH_SEP_CHAR) {
+          Src += 1;
+      }
   }
 
   Status = StrnCatS (Dst, Length + MaxLen + 1, Src, MaxLen);
@@ -698,8 +696,8 @@ UsfFilePathNorm (
   if (Mapping != NULL) {
 
     RootLength = StrLen (EFI_SCRIPT_FILE_ROOT_TYPE_INTERNAL) + StrLen(Mapping) + 1;
-    CurDirLength = (CurDir != NULL) ? StrLen (CurDir) + 1 : 0;
-    PathLength = (Path != NULL) ? StrLen (Path) + 1: 0;
+    CurDirLength = (CurDir == NULL || CurDir[0] == '\0') ? 0 : StrLen (CurDir) + 1;
+    PathLength = (Path == NULL || Path[0] == '\0') ? 0 : StrLen (Path) + 1;
     TempPath = AllocatePool((RootLength + CurDirLength + PathLength + 1) * 2);
     ASSERT (TempPath != NULL);
 
