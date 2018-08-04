@@ -1086,7 +1086,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(efi_mem_free_obj, efi_mem_free);
 STATIC mp_obj_t efi_fptr_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args)
 {
   mp_obj_mem_t  *self = MP_OBJ_TO_PTR(self_in);
-  INTN          i;
+  INTN          i,j;
   mp_obj_mem_t  *memobj;
   mp_obj_t      rtnval;
   UINTN         intval;
@@ -1097,11 +1097,7 @@ STATIC mp_obj_t efi_fptr_call(mp_obj_t self_in, size_t n_args, size_t n_kw, cons
   const char    *argtype;
   VOID          *func;
   BOOLEAN       is_va;
-  UINT64        arglist[10];
-#if defined(MDE_CPU_IA32)
-  UINTN         intval2;
-  CHAR8         typelist[10];
-#endif
+  UINTN         arglist[12];
 
   if (!self->hasvarg) {
     mp_arg_check_num(n_args, n_kw, self->args->len - 1, self->args->len - 1, false);
@@ -1116,7 +1112,7 @@ STATIC mp_obj_t efi_fptr_call(mp_obj_t self_in, size_t n_args, size_t n_kw, cons
   // resolve function address
   func = *(void **)(self->addr);
 
-  for (i = 0; i < n_args; ++i) {
+  for (i = 0, j = 0; i < n_args && j < 12; ++i) {
     arg = args[i];
     if (!is_va) {
       argtype = mp_obj_str_get_str(self->args->items[i + 1]);
@@ -1138,9 +1134,6 @@ STATIC mp_obj_t efi_fptr_call(mp_obj_t self_in, size_t n_args, size_t n_kw, cons
       }
     }
 
-#if defined(MDE_CPU_IA32)
-    typelist[i] = argtype[0];
-#endif
     switch (argtype[0]) {
     case 'P':
     case 'T':
@@ -1151,17 +1144,17 @@ STATIC mp_obj_t efi_fptr_call(mp_obj_t self_in, size_t n_args, size_t n_kw, cons
         memobj = MP_OBJ_TO_PTR(arg);
         if (memobj->typespec != NULL &&
             (memobj->typespec[0] == 'P' || memobj->typespec[0] == 'T' || memobj->typespec[0] == 'F')) {
-          arglist[i] = (UINT64)(UINTN)(*(void **)(memobj->addr));
+          arglist[j++] = (UINTN)(*(void **)(memobj->addr));
         } else {
-          arglist[i] = (UINT64)(UINTN)memobj->addr;
+          arglist[j++] = (UINTN)memobj->addr;
         }
       } else if (MP_OBJ_IS_INT(arg)) {
-        arglist[i] = get_uint64(arg);
+        arglist[j++] = (UINTN)get_uint64(arg);
       } else {
         mp_buffer_info_t        bufinfo;
 
         if (mp_get_buffer(arg, &bufinfo, MP_BUFFER_READ) == TRUE) {
-          arglist[i] = (UINT64)(UINTN)bufinfo.buf;
+          arglist[j++] = (UINTN)bufinfo.buf;
         } else {
           RAISE_UEFI_EXCEPTION_ON_ERROR(EFI_INVALID_PARAMETER);
         }
@@ -1171,10 +1164,10 @@ STATIC mp_obj_t efi_fptr_call(mp_obj_t self_in, size_t n_args, size_t n_kw, cons
     case 'a':
       // ascii string
       if (MP_OBJ_IS_STR_OR_BYTES(args[i])) {
-        arglist[i] = (UINT64)(UINTN)mp_obj_str_get_str(args[i]);
+        arglist[j++] = (UINTN)mp_obj_str_get_str(args[i]);
       } else if (is_va || MP_OBJ_IS_MEM(arg)) {
         memobj = MP_OBJ_TO_PTR(arg);
-        arglist[i] = (UINT64)(UINTN)memobj->addr;
+        arglist[j++] = (UINTN)memobj->addr;
       } else {
         RAISE_UEFI_EXCEPTION_ON_ERROR(EFI_INVALID_PARAMETER);
       }
@@ -1185,126 +1178,109 @@ STATIC mp_obj_t efi_fptr_call(mp_obj_t self_in, size_t n_args, size_t n_kw, cons
       if (MP_OBJ_IS_STR_OR_BYTES(args[i])) {
         strval = mp_obj_str_get_data(args[i], (size_t *)&intval);
         unival = Utf8ToUnicode(strval, NULL, &intval, FALSE);
-        arglist[i] = (UINT64)(UINTN)unival;
+        arglist[j++] = (UINTN)unival;
         strval = NULL;
       } else if (is_va || MP_OBJ_IS_MEM(arg)) {
         memobj = MP_OBJ_TO_PTR(arg);
-        arglist[i] = (UINT64)(UINTN)memobj->addr;
+        arglist[j++] = (UINTN)memobj->addr;
       } else {
         RAISE_UEFI_EXCEPTION_ON_ERROR(EFI_INVALID_PARAMETER);
       }
       break;
 
+#if defined(MDE_CPU_IA32)
+    case 'Q':
+    case 'q':
+      if (is_va || MP_OBJ_IS_MEM(arg)) {
+        memobj = MP_OBJ_TO_PTR(arg);
+        longval = get_uint64(get_value(memobj, mp_const_none));
+      } else {
+        longval = get_uint64(arg);
+      }
+      arglist[j++] = (UINTN)longval;
+      arglist[j++] = *((UINTN *)&longval + 1);
+      break;
+#endif
+
     default:
       if (is_va || MP_OBJ_IS_MEM(arg)) {
         memobj = MP_OBJ_TO_PTR(arg);
-        arglist[i] = get_uint64(get_value(memobj, mp_const_none));
+        arglist[j++] = (UINTN)get_uint64(get_value(memobj, mp_const_none));
       } else {
-        arglist[i] = get_uint64(arg);
+        arglist[j++] = (UINTN)get_uint64(arg);
       }
       break;
     }
   }
 
-#if defined(MDE_CPU_IA32)
-#if   defined(_MSC_VER)
-  for (i = n_args - 1; i >= 0 ; --i) {
-    if (typelist[i] == 'Q' || typelist[i] == 'q') {
-      intval = (UINTN)RShiftU64(arglist[i], 32);
-      __asm {
-        push intval
-      }
-    }
-
-    intval = (UINTN)arglist[i];
-    __asm {
-      push intval
-    }
-  }
-
-  __asm {
-    call func
-    mov intval, eax
-    mov intval2, edx
-  }
-
-  longval = LShiftU64(intval2, 32) | intval;
-#endif
-
-#if   defined(__GNUC__) || defined(__clang__)
-  for (i = n_args - 1; i >= 0 ; --i) {
-    if (typelist[i] == 'Q' || typelist[i] == 'q') {
-      intval = (UINTN)RShiftU64(arglist[i], 32);
-      asm ("push %0\n" : :"m"(intval));
-    }
-
-    intval = (UINTN)arglist[i];
-    asm ("push %0\n" : :"m"(intval));
-  }
-
-  asm ("call *%2\n\t"
-       "mov %%eax, %0\n\t"
-       "mov %%edx, %1"
-       :"=m"(intval), "=m"(intval2)
-       :"m"(func)
-       :
-      );
-
-  longval = LShiftU64(intval2, 32) | intval;
-#endif
-#endif
-
-
-#if defined(MDE_CPU_X64)
-  switch (n_args) {
+  switch (j) {
   case 0:
-    longval = ((FUN_ARG0)func)();
+    longval = ((FUN_NOARG)func)();
     break;
 
   case 1:
-    longval = ((FUN_ARG1)func)(arglist[0]);
+    longval = ((FUN_ARGS)func)(arglist[0]);
     break;
 
   case 2:
-    longval = ((FUN_ARG2)func)(arglist[0], arglist[1]);
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1]);
     break;
 
   case 3:
-    longval = ((FUN_ARG3)func)(arglist[0], arglist[1], arglist[2]);
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2]);
     break;
 
   case 4:
-    longval = ((FUN_ARG4)func)(arglist[0], arglist[1], arglist[2], arglist[3]);
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2], arglist[3]);
     break;
 
   case 5:
-    longval = ((FUN_ARG5)func)(arglist[0], arglist[1], arglist[2], arglist[3], arglist[4]);
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2], arglist[3],
+                               arglist[4]);
     break;
 
   case 6:
-    longval = ((FUN_ARG6)func)(arglist[0], arglist[1], arglist[2], arglist[3], arglist[4], arglist[5]);
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2], arglist[3],
+                               arglist[4], arglist[5]);
     break;
 
   case 7:
-    longval = ((FUN_ARG7)func)(arglist[0], arglist[1], arglist[2], arglist[3], arglist[4], arglist[5], arglist[6]);
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2], arglist[3],
+                               arglist[4], arglist[5], arglist[6]);
     break;
 
   case 8:
-    longval = ((FUN_ARG8)func)(arglist[0], arglist[1], arglist[2], arglist[3], arglist[4], arglist[5], arglist[6], arglist[7]);
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2], arglist[3],
+                               arglist[4], arglist[5], arglist[6], arglist[7]);
     break;
 
   case 9:
-    longval = ((FUN_ARG9)func)(arglist[0], arglist[1], arglist[2], arglist[3], arglist[4], arglist[5], arglist[6], arglist[7], arglist[8]);
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2], arglist[3],
+                               arglist[4], arglist[5], arglist[6], arglist[7],
+                               arglist[8]);
     break;
 
   case 10:
-    longval = ((FUN_ARG10)func)(arglist[0], arglist[1], arglist[2], arglist[3], arglist[4], arglist[5], arglist[6], arglist[7], arglist[8], arglist[9]);
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2], arglist[3],
+                               arglist[4], arglist[5], arglist[6], arglist[7],
+                               arglist[8], arglist[9]);
+    break;
+
+  case 11:
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2], arglist[3],
+                               arglist[4], arglist[5], arglist[6], arglist[7],
+                               arglist[8], arglist[9], arglist[10]);
+    break;
+
+  case 12:
+    longval = ((FUN_ARGS)func)(arglist[0], arglist[1], arglist[2], arglist[3],
+                               arglist[4], arglist[5], arglist[6], arglist[7],
+                               arglist[8], arglist[9], arglist[10], arglist[11]);
     break;
 
   default:
     break;
   }
-#endif
 
   if (unival != NULL) {
     FreePool(unival);

@@ -31,7 +31,6 @@ ASM_PFX(nlr_push):
     mov     [edx + 0x18], esp
     mov     [edx + 0x1C], ecx           ; eip value to restore in nlr_jump
 
-    push    edx                         ; prepare parameter for nlr_push_tail(nlr)
     push    ecx                         ; make sure nlr_push_tail return back to nlr_push's caller()
     jmp     ASM_PFX(nlr_push_tail)      ; do the rest in C
 
