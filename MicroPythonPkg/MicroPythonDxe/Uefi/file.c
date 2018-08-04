@@ -65,6 +65,7 @@ STATIC EFI_STATUS sfp_open(mp_obj_fdfile_t *self, const char *fname, UINT64 mode
 
   status = gBS->LocateProtocol(&gEfiScriptFileProtocolGuid, NULL, (VOID **)&sfp);
   if (!EFI_ERROR(status)) {
+    len = strlen(fname);
     uniname = Utf8ToUnicode(fname, NULL, &len, FALSE);
     ASSERT(uniname != NULL);
 
