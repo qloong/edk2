@@ -23,7 +23,7 @@ public class ConfigurationHolder {
 
 	        /* Create and adjust the configuration singleton */
 	        cfg = new Configuration();
-	        cfg.setClassForTemplateLoading(ConfigurationHolder.class, "templates");
+	        cfg.setClassForTemplateLoading(this.getClass(), "/templates/");
 	        cfg.setDefaultEncoding("UTF-8");
 	        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 	        

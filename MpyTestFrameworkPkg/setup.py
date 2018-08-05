@@ -26,7 +26,6 @@ def check_environment():
 
     global origin
     origin = os.path.split(os.path.abspath(__file__))[0]
-    print "origin is: " + origin 
 
     if not os.path.exists(origin + '/Report' + '/resources' + '/js' + '/Chart.bundle.min.js'):
         error_p('Please download Chart.bundle.min.js to MpyTestFrameworkPkg/Report/resources/js folder')
@@ -106,7 +105,9 @@ def  generate_target():
     shutil.copytree(origin + '/Scripts', target + '/Scripts')
     shutil.copytree(origin + '/Tools', target + '/Tools')
     os.chdir(target + '/Tools/ReportGenerator')
-    subprocess.Popen(r'mvn.cmd package')
+    p = subprocess.Popen(r'mvn.cmd package')
+    p.wait()
+    shutil.copy2(target + '/Tools/ReportGenerator/target/ReportGenerator-1.0-SNAPSHOT-jar-with-dependencies.jar', target + '/Tools')
 
 # Main procedure
 if check_environment() == True:

@@ -54,6 +54,13 @@
             <mainClass>com.gearon.app.App</mainClass>
           </manifest>
         </archive>
+        <includes>
+            <include>**/*.class</include>
+            <include>**/*.jdo</include>
+            <include>**/*.properties</include>
+            <include>**/*.xml</include>
+            <include>**/*.ftl</include>
+        </includes>
       </configuration>
     </plugin>
 

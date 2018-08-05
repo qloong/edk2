@@ -41,27 +41,7 @@ def run(log_path):
         obj.Pass('EDIT opened')
     else:
         obj.Fail('Fail to EDIT')
-    obj.Input("                                                  \n"\
-"                                                  \n"\
-"                        ]CCCCCCCCCCCCC            \n"\
-"                  |CCCC               CCCC        \n"\
-"              >CC                         CCC     \n"\
-"                                           CCC    \n"\
-"          CC                        vCC     CC    \n"\
-"       C               CC           vCC      CC   \n"\
-"     {C   CC  CCCCCCC  CCCC  CCCCC  vCC     cCC   \n"\
-"     C    CC  CC   CC  CC   CC   CC vCC     CC    \n"\
-"    C     CC  CC   CC  CC  CCCCCCCC vCC    CC     \n"\
-"    C     CC  CC   CC  CC  'CC      vCC  CCC      \n"\
-"    C     CC  CC   CC  CCCC _CCCCCC  CC CC        \n"\
-"    CC                                            \n"\
-"    JCC                               C           \n"\
-"     CCCC                         CCCCC           \n"\
-"       CCCCCCC            nCCCCCCCCCC             \n"\
-"          zCCCCCCCCCCCCCCCCCCCCC'                 \n"\
-"                                                  \n"\
-"                                                  \n",1)
-    obj.Input("Suspending", 1)
+    obj.Input("Hello MicroPython Test Framework for UEFI",1)
     obj.Input(".........", 1000)
     obj.FuncKey(mptf.F3)
     obj.Input("N")
