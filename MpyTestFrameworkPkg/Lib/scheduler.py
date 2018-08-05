@@ -172,7 +172,7 @@ def parseArgs():
         schedule_suite(suite, suites_folder + "\\" + suite_folder)
 
     if suites != "":
-        suites_folder = "TEST_SUITES__" + suites + "__" + get_stamp()
+        suites_folder = "TEST_SUITES__" + "SUITES" + "__" + get_stamp()
         uos.mkdir(log_path_abs + suites_folder)
         schedule_suites(suites, suites_folder)
 
